@@ -1,0 +1,125 @@
+{
+  "family": "wanvideo",
+  "name": "Wan2.2-Fun-A14B-InP",
+  "generation_type": "video",
+  "source_script": "examples/wanvideo/model_training/lora/Wan2.2-Fun-A14B-InP.sh",
+  "train_script": "examples/wanvideo/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "PAI/Wan2.2-Fun-A14B-InP",
+        "file_pattern": "high_noise_model/diffusion_pytorch_model*.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "PAI/Wan2.2-Fun-A14B-InP",
+        "file_pattern": "models_t5_umt5-xxl-enc-bf16.pth",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "PAI/Wan2.2-Fun-A14B-InP",
+        "file_pattern": "Wan2.1_VAE.pth",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "PAI/Wan2.2-Fun-A14B-InP",
+        "file_pattern": "low_noise_model/diffusion_pytorch_model*.safetensors",
+        "local_path": "",
+        "fp8": false
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "q,k,v,o,ffn.0,ffn.2",
+    "lora_rank": 32,
+    "dataset_repeat": 100,
+    "resolution_mode": "hw",
+    "max_pixels": null,
+    "height": 480,
+    "width": 832,
+    "num_epochs": 5,
+    "learning_rate": 1e-4,
+    "optimizer": "torch.optim.AdamW",
+    "num_frames": 81,
+    "extra_inputs": null
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": false,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "data_file_keys": "image,video,audio,edit_image",
+    "use_gradient_checkpointing": false
+  },
+  "stages": [
+    {
+      "dataset_repeat": "100",
+      "model_id_with_origin_paths": "PAI/Wan2.2-Fun-A14B-InP:high_noise_model/diffusion_pytorch_model*.safetensors,PAI/Wan2.2-Fun-A14B-InP:models_t5_umt5-xxl-enc-bf16.pth,PAI/Wan2.2-Fun-A14B-InP:Wan2.1_VAE.pth",
+      "num_epochs": 5,
+      "max_timestep_boundary": 0.358,
+      "min_timestep_boundary": 0.0
+    },
+    {
+      "dataset_repeat": "100",
+      "model_id_with_origin_paths": "PAI/Wan2.2-Fun-A14B-InP:low_noise_model/diffusion_pytorch_model*.safetensors,PAI/Wan2.2-Fun-A14B-InP:models_t5_umt5-xxl-enc-bf16.pth,PAI/Wan2.2-Fun-A14B-InP:Wan2.1_VAE.pth",
+      "num_epochs": 5,
+      "max_timestep_boundary": 1.0,
+      "min_timestep_boundary": 0.358
+    }
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "negative_prompt",
+        "type": "string",
+        "default": ""
+      },
+      {
+        "name": "video",
+        "type": "video",
+        "required": true
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "default": 480
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 832
+      },
+      {
+        "name": "num_frames",
+        "type": "number",
+        "default": 81
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 50
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 5.0
+      }
+    ],
+    "pipeline": {
+      "class": "WanVideoPipeline",
+      "lora_modules": [
+        {
+          "module": "dit",
+          "alpha": 1
+        },
+        {
+          "module": "dit2",
+          "alpha": 1
+        }
+      ]
+    }
+  }
+}

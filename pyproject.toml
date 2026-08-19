@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diffsynth-webui"
+version = "0.1.0"
+description = "WebUI for DiffSynth-Studio training"
+authors = [{name = "ModelScope Team"}]
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10.1"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "python-multipart"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools.packages.find]
+where = ["./"]
+include = ["diffsynth_webui", "diffsynth_webui.*"]
+
+
+[tool.setuptools]
+include-package-data = true

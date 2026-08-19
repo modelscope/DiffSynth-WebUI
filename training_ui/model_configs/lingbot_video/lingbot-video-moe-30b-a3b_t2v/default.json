@@ -1,0 +1,94 @@
+{
+  "family": "lingbot_video",
+  "name": "lingbot-video-moe-30b-a3b_t2v",
+  "generation_type": "video",
+  "source_script": "examples/lingbot_video/model_training/lora/lingbot-video-moe-30b-a3b_t2v.sh",
+  "train_script": "examples/lingbot_video/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "Robbyant/lingbot-video-moe-30b-a3b",
+        "file_pattern": "transformer/diffusion_pytorch_model*.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "Qwen/Qwen3-VL-4B-Instruct",
+        "file_pattern": "*.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "Robbyant/lingbot-video-moe-30b-a3b",
+        "file_pattern": "vae/diffusion_pytorch_model.safetensors",
+        "local_path": "",
+        "fp8": false
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "to_q,to_k,to_v,to_out",
+    "lora_rank": 32,
+    "dataset_repeat": 50,
+    "resolution_mode": "hw",
+    "max_pixels": null,
+    "height": 480,
+    "width": 832,
+    "num_epochs": 5,
+    "learning_rate": 1e-4,
+    "optimizer": "torch.optim.AdamW",
+    "num_frames": 81,
+    "extra_inputs": null
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": false,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "data_file_keys": "image,video,audio,edit_image",
+    "use_gradient_checkpointing": true,
+    "processor_path": "Qwen/Qwen3-VL-4B-Instruct:",
+    "first_frame_as_condition": false
+  },
+  "stages": [
+    {}
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "height",
+        "type": "number",
+        "default": 480
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 832
+      },
+      {
+        "name": "num_frames",
+        "type": "number",
+        "default": 81
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 40
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 3.0
+      }
+    ],
+    "pipeline": {
+      "class": "LingBotVideoPipeline",
+      "configs": {
+        "processor_config": [
+          "Qwen/Qwen3-VL-4B-Instruct",
+          null
+        ]
+      }
+    }
+  }
+}

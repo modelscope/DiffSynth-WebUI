@@ -1,0 +1,159 @@
+{
+  "family": "ltx2",
+  "name": "LTX-2-T2AV-IC-LoRA-splited",
+  "generation_type": "video",
+  "source_script": "examples/ltx2/model_training/lora/LTX-2-T2AV-IC-LoRA-splited.sh",
+  "train_script": "examples/ltx2/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "DiffSynth-Studio/LTX-2-Repackage",
+        "file_pattern": "text_encoder_post_modules.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "DiffSynth-Studio/LTX-2-Repackage",
+        "file_pattern": "video_vae_encoder.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "DiffSynth-Studio/LTX-2-Repackage",
+        "file_pattern": "audio_vae_encoder.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "google/gemma-3-12b-it-qat-q4_0-unquantized",
+        "file_pattern": "model-*.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "DiffSynth-Studio/LTX-2-Repackage",
+        "file_pattern": "transformer.safetensors",
+        "local_path": "",
+        "fp8": false
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "to_k,to_q,to_v,to_out.0",
+    "lora_rank": 32,
+    "dataset_repeat": 100,
+    "resolution_mode": "hw",
+    "max_pixels": null,
+    "height": 512,
+    "width": 768,
+    "num_epochs": 5,
+    "learning_rate": 1e-4,
+    "optimizer": "torch.optim.AdamW",
+    "num_frames": 81,
+    "extra_inputs": null
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": false,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "data_file_keys": "video,input_audio,in_context_videos",
+    "use_gradient_checkpointing": true
+  },
+  "stages": [
+    {
+      "dataset_repeat": "1",
+      "model_id_with_origin_paths": "DiffSynth-Studio/LTX-2-Repackage:text_encoder_post_modules.safetensors,DiffSynth-Studio/LTX-2-Repackage:video_vae_encoder.safetensors,DiffSynth-Studio/LTX-2-Repackage:audio_vae_encoder.safetensors,google/gemma-3-12b-it-qat-q4_0-unquantized:model-*.safetensors",
+      "num_epochs": 1,
+      "task": "sft:data_process"
+    },
+    {
+      "dataset_repeat": "100",
+      "model_id_with_origin_paths": "DiffSynth-Studio/LTX-2-Repackage:transformer.safetensors",
+      "num_epochs": 5,
+      "task": "sft:train"
+    }
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "negative_prompt",
+        "type": "string",
+        "default": ""
+      },
+      {
+        "name": "input_video",
+        "type": "video",
+        "required": true,
+        "size_scale": 0.25
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "default": 512
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 768
+      },
+      {
+        "name": "num_frames",
+        "type": "number",
+        "default": 81
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 30
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 3.0
+      }
+    ],
+    "pipeline": {
+      "class": "LTX2AudioVideoPipeline",
+      "adapter": "ltx_ic_lora",
+      "models": [
+        [
+          "google/gemma-3-12b-it-qat-q4_0-unquantized",
+          "model-*.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/LTX-2-Repackage",
+          "transformer.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/LTX-2-Repackage",
+          "text_encoder_post_modules.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/LTX-2-Repackage",
+          "video_vae_decoder.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/LTX-2-Repackage",
+          "audio_vae_decoder.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/LTX-2-Repackage",
+          "audio_vocoder.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/LTX-2-Repackage",
+          "video_vae_encoder.safetensors"
+        ]
+      ],
+      "model_profile": "offload",
+      "configs": {
+        "tokenizer_config": [
+          "google/gemma-3-12b-it-qat-q4_0-unquantized",
+          null
+        ]
+      },
+      "output_fps": 24
+    }
+  }
+}

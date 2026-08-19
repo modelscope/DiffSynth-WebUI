@@ -1,0 +1,133 @@
+{
+  "family": "wanvideo",
+  "name": "Wan2.2-Animate-2-14B",
+  "generation_type": "video",
+  "source_script": "examples/wanvideo/model_training/lora/Wan2.2-Animate-2-14B.sh",
+  "train_script": "examples/wanvideo/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "Wan-AI/Wan2.2-Animate-2-14B",
+        "file_pattern": "videomodel/Wan-AI/models_t5_umt5-xxl-enc-bf16.pth",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "Wan-AI/Wan2.2-Animate-2-14B",
+        "file_pattern": "videomodel/Wan-AI/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "Wan-AI/Wan2.1-T2V-14B",
+        "file_pattern": "Wan2.1_VAE.pth",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "Wan-AI/Wan2.2-Animate-2-14B",
+        "file_pattern": "wan_animate_2/wan_animate_2_bf16.safetensors",
+        "local_path": "",
+        "fp8": false
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "self_attn.q,self_attn.k,self_attn.v",
+    "lora_rank": 32,
+    "dataset_repeat": 100,
+    "resolution_mode": "hw",
+    "max_pixels": null,
+    "height": 640,
+    "width": 352,
+    "num_epochs": 5,
+    "learning_rate": 1e-4,
+    "optimizer": "torch.optim.AdamW",
+    "num_frames": 81,
+    "extra_inputs": null
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": false,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "data_file_keys": "video,animate2_reference_image,animate2_reference_video",
+    "use_gradient_checkpointing": true
+  },
+  "stages": [
+    {
+      "dataset_repeat": "1",
+      "model_id_with_origin_paths": "Wan-AI/Wan2.2-Animate-2-14B:videomodel/Wan-AI/models_t5_umt5-xxl-enc-bf16.pth,Wan-AI/Wan2.2-Animate-2-14B:videomodel/Wan-AI/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth,Wan-AI/Wan2.1-T2V-14B:Wan2.1_VAE.pth",
+      "num_epochs": 1,
+      "task": "sft:data_process"
+    },
+    {
+      "dataset_repeat": "100",
+      "model_id_with_origin_paths": "Wan-AI/Wan2.2-Animate-2-14B:wan_animate_2/wan_animate_2_bf16.safetensors",
+      "num_epochs": 5,
+      "task": "sft:train"
+    }
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "negative_prompt",
+        "type": "string",
+        "default": ""
+      },
+      {
+        "name": "animate2_prompt_ref",
+        "type": "string"
+      },
+      {
+        "name": "animate2_reference_image",
+        "type": "image",
+        "required": true
+      },
+      {
+        "name": "animate2_reference_video",
+        "type": "video",
+        "required": true
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "default": 640
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 352
+      },
+      {
+        "name": "num_frames",
+        "type": "number",
+        "default": 81
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 40
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 3.0
+      }
+    ],
+    "pipeline": {
+      "class": "WanVideoPipeline",
+      "model_profile": "offload",
+      "configs": {
+        "tokenizer_config": [
+          "Wan-AI/Wan2.2-Animate-2-14B",
+          "videomodel/Wan-AI/umt5-xxl/"
+        ]
+      },
+      "call_defaults": {
+        "animate2_offload_kv": true
+      },
+      "output_fps": 24
+    }
+  }
+}

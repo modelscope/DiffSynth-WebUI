@@ -1,0 +1,86 @@
+{
+  "family": "ideogram4",
+  "name": "Ideogram-4-bf16-repackage",
+  "generation_type": "image",
+  "source_script": "examples/ideogram4/model_training/lora/Ideogram-4-bf16-repackage.sh",
+  "train_script": "examples/ideogram4/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "DiffSynth-Studio/ideogram-4-bf16-repackage",
+        "file_pattern": "transformer/diffusion_pytorch_model.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "DiffSynth-Studio/ideogram-4-bf16-repackage",
+        "file_pattern": "text_encoder/model.safetensors",
+        "local_path": "",
+        "fp8": false
+      },
+      {
+        "model_id": "DiffSynth-Studio/ideogram-4-bf16-repackage",
+        "file_pattern": "vae/diffusion_pytorch_model.safetensors",
+        "local_path": "",
+        "fp8": false
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "attention.qkv,attention.o,feed_forward.w1,feed_forward.w2,feed_forward.w3,adaln_modulation",
+    "lora_rank": 32,
+    "dataset_repeat": 100,
+    "resolution_mode": "max_pixels",
+    "max_pixels": 1048576,
+    "height": 1024,
+    "width": 1024,
+    "num_epochs": 5,
+    "learning_rate": 1e-4,
+    "optimizer": "torch.optim.AdamW",
+    "extra_inputs": null
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": true,
+    "use_gradient_checkpointing": true,
+    "lora_base_model": "dit",
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "data_file_keys": "image,video,audio,edit_image"
+  },
+  "stages": [
+    {}
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "height",
+        "type": "number",
+        "default": 1024
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 1024
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 48
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 7.0
+      }
+    ],
+    "pipeline": {
+      "class": "Ideogram4Pipeline",
+      "configs": {
+        "processor_config": [
+          "ideogram-ai/ideogram-4-fp8",
+          "tokenizer/"
+        ]
+      }
+    }
+  }
+}
