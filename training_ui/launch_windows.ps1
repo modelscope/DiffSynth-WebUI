@@ -26,6 +26,14 @@ function Require-Command([string]$Name) {
     }
 }
 
+function Resolve-NpmCommand {
+    $command = Get-Command "npm.cmd" -CommandType Application -ErrorAction SilentlyContinue
+    if (-not $command) {
+        Fail "missing command: npm.cmd"
+    }
+    return $command.Source
+}
+
 function Wait-Http([string]$Url, [string]$Name) {
     for ($i = 0; $i -lt 40; $i++) {
         try {
@@ -55,7 +63,7 @@ try {
     }
     Require-Command "python"
     Require-Command "node"
-    Require-Command "npm"
+    $NpmCommand = Resolve-NpmCommand
     New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
     $LogDir = (Resolve-Path $LogDir).Path
 
@@ -75,11 +83,11 @@ try {
         try {
             if (-not (Test-Path (Join-Path $FrontendDir "node_modules"))) {
                 Write-Host "[launch_windows] installing frontend dependencies..."
-                npm install
+                & $NpmCommand install
                 if ($LASTEXITCODE -ne 0) { Fail "npm install failed" }
             }
             Write-Host "[launch_windows] building frontend..."
-            npm run build
+            & $NpmCommand run build
             if ($LASTEXITCODE -ne 0) { Fail "npm run build failed" }
         } finally {
             Pop-Location
@@ -93,7 +101,7 @@ try {
     Wait-Http "http://127.0.0.1:$BackendPort/api/health" "backend"
 
     $frontendArgs = @("run", "start", "--", "-p", "$FrontendPort", "-H", "127.0.0.1")
-    $frontend = Start-LoggedProcess "npm" $frontendArgs $FrontendDir "frontend"
+    $frontend = Start-LoggedProcess $NpmCommand $frontendArgs $FrontendDir "frontend"
     Wait-Http "http://127.0.0.1:$FrontendPort/dashboard" "frontend"
 
     Write-Host "[launch_windows] ready"
