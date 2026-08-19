@@ -63,7 +63,8 @@
 ```bash
 git clone --recurse-submodules https://github.com/modelscope/DiffSynth-WebUI.git
 cd DiffSynth-WebUI
-bash setup.sh
+pip install -e DiffSynth-Studio/
+pip install -e .
 ```
 
 ### 启动 WebUI
