@@ -139,10 +139,8 @@ export default function DatasetDetailPage() {
   );
 
   useEffect(() => {
-    if (compatibleCaptionModels.length === 0) {
-      setCaptionModelId("");
-      return;
-    }
+    // Keep the editor's model selection when batch targets are empty.
+    if (compatibleCaptionModels.length === 0) return;
     if (!compatibleCaptionModels.some((model) => model.id === captionModelId)) {
       setCaptionModelId(compatibleCaptionModels[0].id);
     }
