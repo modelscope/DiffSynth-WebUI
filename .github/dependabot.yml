@@ -1,0 +1,19 @@
+version: 2
+
+updates:
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "10:00"
+    
+    labels:
+      - "submodule-sync"
+      - "dependencies"
+    
+    assignees:
+      - "yjy415"
+    
+    commit-message:
+      prefix: "chore"
+      include: "scope"
