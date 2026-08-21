@@ -10,25 +10,33 @@
         "model_id": "PAI/Wan2.2-Fun-A14B-InP",
         "file_pattern": "high_noise_model/diffusion_pytorch_model*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "PAI/Wan2.2-Fun-A14B-InP",
         "file_pattern": "models_t5_umt5-xxl-enc-bf16.pth",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "PAI/Wan2.2-Fun-A14B-InP",
         "file_pattern": "Wan2.1_VAE.pth",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "PAI/Wan2.2-Fun-A14B-InP",
         "file_pattern": "low_noise_model/diffusion_pytorch_model*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

@@ -10,19 +10,25 @@
         "model_id": "ACE-Step/acestep-v15-xl-sft",
         "file_pattern": "model-*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "ACE-Step/Ace-Step1.5",
         "file_pattern": "Qwen3-Embedding-0.6B/model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "ACE-Step/Ace-Step1.5",
         "file_pattern": "vae/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

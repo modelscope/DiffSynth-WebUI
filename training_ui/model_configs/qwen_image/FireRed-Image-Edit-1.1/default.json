@@ -10,19 +10,25 @@
         "model_id": "FireRedTeam/FireRed-Image-Edit-1.1",
         "file_pattern": "transformer/diffusion_pytorch_model*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Qwen/Qwen-Image",
         "file_pattern": "text_encoder/model*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Qwen/Qwen-Image",
         "file_pattern": "vae/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

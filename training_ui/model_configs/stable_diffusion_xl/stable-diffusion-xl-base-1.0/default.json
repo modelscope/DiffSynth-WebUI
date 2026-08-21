@@ -10,25 +10,33 @@
         "model_id": "stabilityai/stable-diffusion-xl-base-1.0",
         "file_pattern": "text_encoder/model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "stabilityai/stable-diffusion-xl-base-1.0",
         "file_pattern": "text_encoder_2/model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "stabilityai/stable-diffusion-xl-base-1.0",
         "file_pattern": "unet/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "stabilityai/stable-diffusion-xl-base-1.0",
         "file_pattern": "vae/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

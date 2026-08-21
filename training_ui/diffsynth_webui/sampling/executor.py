@@ -16,10 +16,17 @@ def _decode(value: Any) -> Any:
         return getattr(torch, str(value["$torch"]))
     if set(value) == {"$cuda_free_gb_minus"}:
         import torch
-        return torch.cuda.mem_get_info("cuda")[1] / (1024 ** 3) - float(value["$cuda_free_gb_minus"])
+        try:
+            free, _ = torch.cuda.mem_get_info("cuda")
+        except (RuntimeError, NotImplementedError):
+            free = torch.cuda.get_device_properties("cuda").total_memory - torch.cuda.memory_reserved("cuda")
+        return free / (1024 ** 3) - float(value["$cuda_free_gb_minus"])
     if set(value) == {"$model_config"}:
         from diffsynth import ModelConfig
         return ModelConfig(**_decode(value["$model_config"]))
+    if set(value) == {"$quantize_config"}:
+        from diffsynth import QuantizeConfig
+        return QuantizeConfig(**_decode(value["$quantize_config"]))
     return {key: _decode(item) for key, item in value.items()}
 
 

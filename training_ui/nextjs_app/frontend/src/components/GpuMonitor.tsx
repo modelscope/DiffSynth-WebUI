@@ -47,8 +47,8 @@ export function GpuMonitor() {
                     <span className="ml-2 text-sm font-medium text-slate-100">{gpu.name}</span>
                   </div>
                   <div className="text-xs text-slate-400">
-                    <span className="mr-3">Utilization {gpu.utilization}%</span>
-                    <span>{gpu.temperature}°C</span>
+                    <span className="mr-3">Utilization {gpu.utilization == null ? "N/A" : `${gpu.utilization}%`}</span>
+                    <span>{gpu.temperature == null ? "N/A" : `${gpu.temperature}°C`}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

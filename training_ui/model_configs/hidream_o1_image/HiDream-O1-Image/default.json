@@ -10,7 +10,9 @@
         "model_id": "HiDream-ai/HiDream-O1-Image",
         "file_pattern": "model-*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

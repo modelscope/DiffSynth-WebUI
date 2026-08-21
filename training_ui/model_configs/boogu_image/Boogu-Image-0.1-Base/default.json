@@ -10,19 +10,25 @@
         "model_id": "Boogu/Boogu-Image-0.1-Base",
         "file_pattern": "transformer/*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Boogu/Boogu-Image-0.1-Base",
         "file_pattern": "mllm/*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Boogu/Boogu-Image-0.1-Base",
         "file_pattern": "vae/*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

@@ -10,25 +10,33 @@
         "model_id": "PAI/Z-Image-Turbo-Fun-Controlnet-Union-2.1",
         "file_pattern": "Z-Image-Turbo-Fun-Controlnet-Union-2.1-8steps.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Tongyi-MAI/Z-Image-Turbo",
         "file_pattern": "transformer/*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Tongyi-MAI/Z-Image-Turbo",
         "file_pattern": "text_encoder/*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Tongyi-MAI/Z-Image-Turbo",
         "file_pattern": "vae/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

@@ -149,6 +149,9 @@ class ModelPath:
     file_pattern: str = ""
     local_path: str = ""
     fp8: bool = False
+    nf4: bool = False
+    quant_method: str = ""
+    exclude_modules: str = ""
 
 
 @dataclass

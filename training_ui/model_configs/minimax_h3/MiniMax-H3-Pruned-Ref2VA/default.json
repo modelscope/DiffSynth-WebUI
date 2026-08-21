@@ -10,25 +10,33 @@
         "model_id": "MiniMax/MiniMax-H3",
         "file_pattern": "Ref2VA/text_encoder/model*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "MiniMax/MiniMax-H3",
         "file_pattern": "Ref2VA/video_vae/source/model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "MiniMax/MiniMax-H3",
         "file_pattern": "Ref2VA/audio_vae/model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Comfy-Org/MiniMax-H3",
         "file_pattern": "diffusion_models/minimax_h3_ref2va_pruned_bf16.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

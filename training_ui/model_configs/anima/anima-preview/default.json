@@ -10,19 +10,25 @@
         "model_id": "circlestone-labs/Anima",
         "file_pattern": "split_files/diffusion_models/anima-preview.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "circlestone-labs/Anima",
         "file_pattern": "split_files/text_encoders/qwen_3_06b_base.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "circlestone-labs/Anima",
         "file_pattern": "split_files/vae/qwen_image_vae.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

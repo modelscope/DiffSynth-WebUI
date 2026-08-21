@@ -10,25 +10,33 @@
         "model_id": "DiffSynth-Studio/MiniMax-H3-NF4",
         "file_pattern": "minimax-h3-text-encoder-nf4.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "DiffSynth-Studio/MiniMax-H3-NF4",
         "file_pattern": "minimax-h3-ref2va-nf4.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "DiffSynth-Studio/MiniMax-H3-NF4",
         "file_pattern": "video_vae_nf4.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "DiffSynth-Studio/MiniMax-H3-NF4",
         "file_pattern": "audio_vae_nf4.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

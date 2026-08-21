@@ -10,43 +10,57 @@
         "model_id": "openmoss/MOVA-720p",
         "file_pattern": "video_dit/diffusion_pytorch_model-*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "openmoss/MOVA-720p",
         "file_pattern": "audio_dit/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "openmoss/MOVA-720p",
         "file_pattern": "dual_tower_bridge/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "openmoss/MOVA-720p",
         "file_pattern": "audio_vae/diffusion_pytorch_model.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "DiffSynth-Studio/Wan-Series-Converted-Safetensors",
         "file_pattern": "Wan2.1_VAE.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "DiffSynth-Studio/Wan-Series-Converted-Safetensors",
         "file_pattern": "models_t5_umt5-xxl-enc-bf16.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "openmoss/MOVA-720p",
         "file_pattern": "video_dit_2/diffusion_pytorch_model-*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

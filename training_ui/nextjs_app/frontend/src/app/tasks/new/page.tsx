@@ -7,7 +7,7 @@ import { api } from "@/lib/api";
 import { formatShellCommand } from "@/lib/format";
 import { Button, Card, Field, PageHeader } from "@/components/ui";
 
-type ModelPath = { model_id: string; file_pattern: string; local_path: string; fp8: boolean };
+type ModelPath = { model_id: string; file_pattern: string; local_path: string; fp8: boolean; nf4: boolean; exclude_modules: string };
 type StageParameters = {
   max_timestep_boundary?: number;
   min_timestep_boundary?: number;
@@ -247,6 +247,8 @@ export default function NewTaskPage() {
         file_pattern: mp.file_pattern || "",
         local_path: mp.local_path || "",
         fp8: !!mp.fp8,
+        nf4: !!mp.nf4,
+        exclude_modules: mp.exclude_modules || "",
       })),
     );
     setLoraTargetModules(r.default_lora_target || "");
@@ -507,7 +509,7 @@ export default function NewTaskPage() {
                 ))}
               </select>
               {gpus.length === 0 && (
-                <div className="mt-2 text-xs text-amber-300">No available NVIDIA GPU detected</div>
+                <div className="mt-2 text-xs text-amber-300">No available GPU detected</div>
               )}
             </Field>
           </Card>
@@ -554,6 +556,8 @@ export default function NewTaskPage() {
                       <th>file_pattern</th>
                       <th>local_path</th>
                       <th className="w-12 text-center">FP8</th>
+                      <th className="w-12 text-center">NF4</th>
+                      <th>exclude_modules</th>
                       <th className="w-10"></th>
                     </tr>
                   </thead>
@@ -600,10 +604,15 @@ export default function NewTaskPage() {
                             onChange={(e) => {
                               const next = [...modelPaths];
                               next[idx].fp8 = e.target.checked;
+                              if (e.target.checked) next[idx].nf4 = false;
                               setModelPaths(next);
                             }}
                           />
                         </td>
+                        <td className="text-center">
+                          <input type="checkbox" checked={mp.nf4} onChange={(e) => { const next = [...modelPaths]; next[idx].nf4 = e.target.checked; if (e.target.checked) next[idx].fp8 = false; setModelPaths(next); }} />
+                        </td>
+                        <td><input className="w-full" value={mp.exclude_modules} disabled={!mp.nf4} onChange={(e) => { const next = [...modelPaths]; next[idx].exclude_modules = e.target.value; setModelPaths(next); }} /></td>
                         <td>
                           <Button
                             variant="ghost"
@@ -625,7 +634,7 @@ export default function NewTaskPage() {
                   onClick={() =>
                     setModelPaths([
                       ...modelPaths,
-                      { model_id: "", file_pattern: "", local_path: "", fp8: false },
+                      { model_id: "", file_pattern: "", local_path: "", fp8: false, nf4: false, exclude_modules: "" },
                     ])
                   }
                 >

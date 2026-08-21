@@ -10,13 +10,17 @@
         "model_id": "jd-opensource/JoyAI-Echo",
         "file_pattern": "JoyAI-Echo-release.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "google/gemma-3-12b-it-qat-q4_0-unquantized",
         "file_pattern": "model-*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

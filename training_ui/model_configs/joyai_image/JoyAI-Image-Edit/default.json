@@ -10,19 +10,25 @@
         "model_id": "jd-opensource/JoyAI-Image-Edit",
         "file_pattern": "JoyAI-Image-Und/model*.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "jd-opensource/JoyAI-Image-Edit",
         "file_pattern": "vae/Wan2.1_VAE.pth",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "jd-opensource/JoyAI-Image-Edit",
         "file_pattern": "transformer/transformer.pth",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,

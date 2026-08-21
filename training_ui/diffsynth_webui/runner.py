@@ -30,25 +30,32 @@ def _subprocess_env() -> Dict[str, str]:
     return env
 
 
-def _stringify_model_paths(model_paths: List[Dict[str, Any]]) -> Tuple[str, str, str]:
+def _stringify_model_paths(model_paths: List[Dict[str, Any]]) -> Tuple[str, str, str, str]:
     origin_parts: List[str] = []
     local_parts: List[str] = []
     fp8_parts: List[str] = []
+    quant_parts: List[str] = []
     for mp in model_paths:
         model_id = (mp.get("model_id") or "").strip()
         file_pattern = (mp.get("file_pattern") or "").strip()
         local_path = (mp.get("local_path") or "").strip()
         fp8 = bool(mp.get("fp8"))
+        nf4 = bool(mp.get("nf4"))
+        exclude_modules = (mp.get("exclude_modules") or "").strip()
         if local_path:
             local_parts.append(local_path)
             if fp8:
                 fp8_parts.append(local_path)
+            if nf4:
+                quant_parts.append(f"{local_path}:bitsandbytes_nf4" + (f"/{exclude_modules}" if exclude_modules else ""))
         elif model_id:
             spec = f"{model_id}:{file_pattern}" if file_pattern else model_id
             origin_parts.append(spec)
             if fp8:
                 fp8_parts.append(spec)
-    return (",".join(origin_parts), ",".join(local_parts), ",".join(fp8_parts))
+            if nf4:
+                quant_parts.append(f"{spec}:bitsandbytes_nf4" + (f"/{exclude_modules}" if exclude_modules else ""))
+    return (",".join(origin_parts), ",".join(local_parts), ",".join(fp8_parts), ";".join(quant_parts))
 
 
 def _resolve_extra_inputs(dataset_name: str) -> str:
@@ -66,7 +73,7 @@ def build_command(
     ds_dir = datasets.dataset_path(ds_name)
     metadata_path = datasets.metadata_path(ds_name)
 
-    origin, model_paths_str, fp8_str = _stringify_model_paths(cfg.get("model_paths") or [])
+    origin, model_paths_str, fp8_str, quant_str = _stringify_model_paths(cfg.get("model_paths") or [])
 
     if cfg.get("enable_custom_lora_target"):
         lora_target = (cfg.get("lora_target_modules") or "").strip()
@@ -109,6 +116,8 @@ def build_command(
         add("model_paths", model_paths_str)
     if fp8_str:
         add("fp8_models", fp8_str)
+    if quant_str:
+        add("quant_options", quant_str)
 
     resume_from_checkpoint = str(cfg.get("resume_from_checkpoint") or "").strip()
     if resume_from_checkpoint:

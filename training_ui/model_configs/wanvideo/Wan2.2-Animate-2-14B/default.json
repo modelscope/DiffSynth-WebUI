@@ -10,25 +10,33 @@
         "model_id": "Wan-AI/Wan2.2-Animate-2-14B",
         "file_pattern": "videomodel/Wan-AI/models_t5_umt5-xxl-enc-bf16.pth",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Wan-AI/Wan2.2-Animate-2-14B",
         "file_pattern": "videomodel/Wan-AI/models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Wan-AI/Wan2.1-T2V-14B",
         "file_pattern": "Wan2.1_VAE.pth",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       },
       {
         "model_id": "Wan-AI/Wan2.2-Animate-2-14B",
         "file_pattern": "wan_animate_2/wan_animate_2_bf16.safetensors",
         "local_path": "",
-        "fp8": false
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
       }
     ],
     "enable_custom_lora_target": false,
