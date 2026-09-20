@@ -23,6 +23,7 @@ PIPELINE_MODULES = {
     "MiniMaxH3Pipeline": "diffsynth.pipelines.minimax_h3_audio_video",
     "MovaAudioVideoPipeline": "diffsynth.pipelines.mova_audio_video",
     "QwenImagePipeline": "diffsynth.pipelines.qwen_image",
+    "QwenImage21Pipeline": "diffsynth.pipelines.qwen_image_21",
     "StableDiffusionPipeline": "diffsynth.pipelines.stable_diffusion",
     "StableDiffusionXLPipeline": "diffsynth.pipelines.stable_diffusion_xl",
     "WanVideoPipeline": "diffsynth.pipelines.wan_video",
