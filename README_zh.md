@@ -231,6 +231,8 @@ metadata.jsonl 每行一条样本：
 - JoyAI-Image
 - Krea 2
 - Qwen-Image
+- Qwen-Image 2.1
+- SenseNova-U1
 - Stable Diffusion
 - Stable Diffusion XL
 - Z-Image
@@ -240,6 +242,7 @@ metadata.jsonl 每行一条样本：
 - LTX-2
 - MiniMax-H3
 - MOVA
+- Qwen-Video-Edit
 - Wan
 
 ### 音频生成模型

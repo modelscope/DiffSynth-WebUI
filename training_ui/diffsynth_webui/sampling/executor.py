@@ -115,12 +115,16 @@ def prepare_inputs(
 
     adapter = str(spec.get("adapter") or "generic")
     if adapter == "controlnet" or model_type == "FLUX.1-dev-InfiniteYou":
-        # Recipe adapters translate generic UI fields into each pipeline's call signature.
         key = "blockwise_controlnet_inputs" if spec.get("class") == "QwenImagePipeline" else "controlnet_inputs"
         values[key] = _controlnet_input(spec, values)
     if spec.get("class") == "LTX2AudioVideoPipeline" and "image" in values:
         values["input_images"] = [values.pop("image")]
         values["input_images_indexes"] = [0]
+    if spec.get("class") == "QwenVideoEditPipeline":
+        # One prompt per 45-frame chunk; the sample prompt covers the first chunk.
+        prompt = values.pop("prompt", "")
+        chunk_prompts = values.pop("prompts", None) or [prompt]
+        values["prompts"] = [str(item) for item in chunk_prompts]
     if adapter == "ltx_ic_lora":
         values["in_context_videos"] = [values.pop("input_video")]
         values["in_context_downsample_factor"] = 2

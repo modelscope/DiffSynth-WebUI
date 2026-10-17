@@ -16,6 +16,7 @@ PIPELINE_MODULES = {
     "Flux2ImagePipeline": "diffsynth.pipelines.flux2_image",
     "FluxImagePipeline": "diffsynth.pipelines.flux_image",
     "HiDreamO1ImagePipeline": "diffsynth.pipelines.hidream_o1_image",
+    "Ideogram4Pipeline": "diffsynth.pipelines.ideogram4",
     "JoyAIImagePipeline": "diffsynth.pipelines.joyai_image",
     "Krea2Pipeline": "diffsynth.pipelines.krea2",
     "LTX2AudioVideoPipeline": "diffsynth.pipelines.ltx2_audio_video",
@@ -24,6 +25,8 @@ PIPELINE_MODULES = {
     "MovaAudioVideoPipeline": "diffsynth.pipelines.mova_audio_video",
     "QwenImagePipeline": "diffsynth.pipelines.qwen_image",
     "QwenImage21Pipeline": "diffsynth.pipelines.qwen_image_21",
+    "QwenVideoEditPipeline": "diffsynth.pipelines.qwen_video_edit",
+    "SenseNovaU1ImagePipeline": "diffsynth.pipelines.sensenova_u1_image",
     "StableDiffusionPipeline": "diffsynth.pipelines.stable_diffusion",
     "StableDiffusionXLPipeline": "diffsynth.pipelines.stable_diffusion_xl",
     "WanVideoPipeline": "diffsynth.pipelines.wan_video",
@@ -69,6 +72,7 @@ def _normalize_sampling(data: Dict[str, Any], defaults: Dict[str, Any], training
     model_profile = {
         "offload": OFFLOAD_MODEL_CONFIG,
         "minimax_offload": MINIMAX_OFFLOAD_MODEL_CONFIG,
+        "offload_cpu": MINIMAX_OFFLOAD_MODEL_CONFIG,
     }.get(str(pipeline.get("model_profile") or ""), {})
     compact_models = pipeline.get("models")
     if compact_models is None:
@@ -171,6 +175,7 @@ class ModelRecipe:
     default_model_paths: List[ModelPath] = field(default_factory=list)
     extra_defaults: Dict[str, Any] = field(default_factory=dict)
     default_data_file_keys: str = "image,video,audio,edit_image"
+    extra_inputs_override: Optional[str] = None
     default_resolution_mode: Optional[str] = None
     default_max_pixels: Optional[int] = None
     default_height: Optional[int] = None
@@ -261,6 +266,10 @@ def _load_recipe(path: Path) -> ModelRecipe:
             str(training_args["data_file_keys"])
             if training_args.get("data_file_keys")
             else None
+        ),
+        extra_inputs_override=(
+            None if defaults.get("extra_inputs") is None
+            else str(defaults["extra_inputs"])
         ),
         default_resolution_mode=(
             str(defaults["resolution_mode"])

@@ -1,0 +1,105 @@
+{
+  "family": "qwen_video_edit",
+  "name": "Qwen-Video-Edit",
+  "generation_type": "video",
+  "source_script": "examples/qwen_video_edit/model_training/lora/Qwen-Video-Edit.sh",
+  "train_script": "examples/qwen_video_edit/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "yunpeng1998/Qwen-Video-Edit",
+        "file_pattern": "360P/step-30000.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "Qwen/Qwen-Image",
+        "file_pattern": "text_encoder/model*.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "Wan-AI/Wan2.1-T2V-1.3B",
+        "file_pattern": "Wan2.1_VAE.pth",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "to_q,to_k,to_v,add_q_proj,add_k_proj,add_v_proj,to_out.0,to_add_out,img_mlp.net.2,img_mod.1,txt_mlp.net.2,txt_mod.1",
+    "lora_rank": 32,
+    "dataset_repeat": 50,
+    "resolution_mode": "hw",
+    "max_pixels": null,
+    "height": 640,
+    "width": 384,
+    "num_frames": 45,
+    "num_epochs": 5,
+    "learning_rate": 1e-4,
+    "optimizer": "torch.optim.AdamW",
+    "extra_inputs": ""
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 8,
+    "find_unused_parameters": true,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "use_gradient_checkpointing": true,
+    "data_file_keys": "video,input_video",
+    "zero_cond_t": true
+  },
+  "stages": [
+    {}
+  ],
+  "sampling": {
+    "output_extension": ".mp4",
+    "input_schema": [
+      {
+        "name": "edit_video",
+        "type": "video",
+        "required": true
+      },
+      {
+        "name": "prompts",
+        "type": "string_list",
+        "label": "Prompts (One Per 45-Frame Chunk)"
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "default": 640
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 384
+      },
+      {
+        "name": "num_frames",
+        "type": "number",
+        "default": 45
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 40
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 4.0
+      }
+    ],
+    "pipeline": {
+      "class": "QwenVideoEditPipeline",
+      "output_fps": 16
+    }
+  }
+}

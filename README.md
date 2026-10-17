@@ -230,6 +230,8 @@ One sample per line in `metadata.jsonl`:
 - JoyAI-Image
 - Krea 2
 - Qwen-Image
+- Qwen-Image 2.1
+- SenseNova-U1
 - Stable Diffusion
 - Stable Diffusion XL
 - Z-Image
@@ -239,6 +241,7 @@ One sample per line in `metadata.jsonl`:
 - LTX-2
 - MiniMax-H3
 - MOVA
+- Qwen-Video-Edit
 - Wan
 
 ### Audio Generation

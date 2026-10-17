@@ -67,6 +67,8 @@ const MODEL_FAMILY_LABELS: Record<string, string> = {
   mova: "MOVA",
   qwen_image: "Qwen-Image",
   qwen_image_21: "Qwen-Image 2.1",
+  qwen_video_edit: "Qwen-Video-Edit",
+  sensenova_u1: "SenseNova-U1",
   stable_diffusion: "Stable Diffusion",
   stable_diffusion_xl: "Stable Diffusion XL",
   wanvideo: "Wan",

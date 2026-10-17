@@ -81,12 +81,40 @@
     ],
     "pipeline": {
       "class": "Ideogram4Pipeline",
+      "models": [
+        [
+          "DiffSynth-Studio/ideogram-4-bf16-repackage",
+          "transformer/diffusion_pytorch_model.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/ideogram-4-bf16-repackage",
+          "unconditional_transformer/diffusion_pytorch_model.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/ideogram-4-bf16-repackage",
+          "text_encoder/model.safetensors"
+        ],
+        [
+          "DiffSynth-Studio/ideogram-4-bf16-repackage",
+          "vae/diffusion_pytorch_model.safetensors"
+        ]
+      ],
       "configs": {
-        "processor_config": [
+        "tokenizer_config": [
           "ideogram-ai/ideogram-4-fp8",
           "tokenizer/"
         ]
-      }
+      },
+      "lora_modules": [
+        {
+          "module": "dit",
+          "alpha": 1
+        },
+        {
+          "module": "dit_uncond",
+          "alpha": 1
+        }
+      ]
     }
   }
 }

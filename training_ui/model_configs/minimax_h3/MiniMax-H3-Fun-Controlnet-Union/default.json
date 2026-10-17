@@ -1,0 +1,138 @@
+{
+  "family": "minimax_h3",
+  "name": "MiniMax-H3-Fun-Controlnet-Union",
+  "generation_type": "video",
+  "source_script": "examples/minimax_h3/model_training/lora/MiniMax-H3-Fun-Controlnet-Union.sh",
+  "train_script": "examples/minimax_h3/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "MiniMax/MiniMax-H3",
+        "file_pattern": "FL2VA/text_encoder/model*.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "MiniMax/MiniMax-H3",
+        "file_pattern": "FL2VA/video_vae/source/model.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "MiniMax/MiniMax-H3",
+        "file_pattern": "FL2VA/audio_vae/model.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "MiniMax/MiniMax-H3",
+        "file_pattern": "FL2VA/transformer/model*.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "PAI/MiniMax-H3-Fun-Controlnet-Union",
+        "file_pattern": "MiniMax-H3-Fun-Controlnet-Union.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "attn.qkv_proj,attn.out_proj,mlp.fc1,mlp.fc2",
+    "lora_rank": 32,
+    "dataset_repeat": 100,
+    "resolution_mode": "hw",
+    "max_pixels": null,
+    "height": 480,
+    "width": 832,
+    "num_frames": 124,
+    "num_epochs": 5,
+    "learning_rate": 1e-4,
+    "optimizer": "torch.optim.AdamW",
+    "extra_inputs": null
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": true,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "use_gradient_checkpointing": true,
+    "data_file_keys": "image,video,audio,edit_image,input_audio,control_video"
+  },
+  "stages": [
+    {
+      "dataset_repeat": "1",
+      "num_epochs": 1,
+      "model_id_with_origin_paths": "MiniMax/MiniMax-H3:FL2VA/text_encoder/model*.safetensors,MiniMax/MiniMax-H3:FL2VA/video_vae/source/model.safetensors,MiniMax/MiniMax-H3:FL2VA/audio_vae/model.safetensors",
+      "task": "sft:data_process"
+    },
+    {
+      "dataset_repeat": "100",
+      "num_epochs": 5,
+      "model_id_with_origin_paths": "MiniMax/MiniMax-H3:FL2VA/transformer/model*.safetensors,PAI/MiniMax-H3-Fun-Controlnet-Union:MiniMax-H3-Fun-Controlnet-Union.safetensors",
+      "task": "sft:train"
+    }
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "control_video",
+        "type": "video",
+        "required": true
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "default": 480
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 832
+      },
+      {
+        "name": "num_frames",
+        "type": "number",
+        "default": 124
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 40
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 1.0
+      },
+      {
+        "name": "control_scale",
+        "type": "number",
+        "default": 1.0
+      }
+    ],
+    "pipeline": {
+      "class": "MiniMaxH3Pipeline",
+      "model_profile": "minimax_offload",
+      "vram_reserve_gb": 5,
+      "configs": {
+        "processor_config": [
+          "MiniMax/MiniMax-H3",
+          "FL2VA/processor/"
+        ]
+      },
+      "output_fps": 24
+    }
+  }
+}

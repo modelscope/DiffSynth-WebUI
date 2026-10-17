@@ -410,7 +410,7 @@ def delete_media(name: str, file_names: List[str]) -> List[str]:
 
 
 def get_extra_input_keys(name: str) -> List[str]:
-    excluded = {"image", "video", "audio", "edit_image", "prompt"}
+    excluded = {"image", "video", "audio", "prompt"}
     keys: set = set()
     for it in read_metadata(name):
         keys.update(it.keys())

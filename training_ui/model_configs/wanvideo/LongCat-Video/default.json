@@ -43,7 +43,7 @@
     "learning_rate": 1e-4,
     "optimizer": "torch.optim.AdamW",
     "num_frames": 81,
-    "extra_inputs": null
+    "extra_inputs": ""
   },
   "training_args": {
     "gradient_accumulation": 1,

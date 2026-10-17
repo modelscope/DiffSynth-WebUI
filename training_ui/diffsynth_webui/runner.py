@@ -58,10 +58,13 @@ def _stringify_model_paths(model_paths: List[Dict[str, Any]]) -> Tuple[str, str,
     return (",".join(origin_parts), ",".join(local_parts), ",".join(fp8_parts), ";".join(quant_parts))
 
 
-def _resolve_extra_inputs(dataset_name: str) -> str:
+def _resolve_extra_inputs(dataset_name: str, recipe: recipes.ModelRecipe) -> str:
     if not dataset_name:
         return ""
-    return ",".join(datasets.get_extra_input_keys(dataset_name))
+    keys = datasets.get_extra_input_keys(dataset_name)
+    if "edit_image" not in set((recipe.default_data_file_keys or "").split(",")):
+        keys = [key for key in keys if key != "edit_image"]
+    return ",".join(keys)
 
 
 def build_command(
@@ -150,9 +153,13 @@ def build_command(
         argv.append("--use_gradient_checkpointing")
 
     fixed = recipe.fixed_training_args
-    extra = _resolve_extra_inputs(ds_name)
-    if extra:
-        add("extra_inputs", extra)
+    extra_inputs = (
+        _resolve_extra_inputs(ds_name, recipe)
+        if recipe.extra_inputs_override is None
+        else recipe.extra_inputs_override
+    )
+    if extra_inputs:
+        add("extra_inputs", extra_inputs)
 
     add("gradient_accumulation_steps", fixed.get("gradient_accumulation", 1))
     add("dataset_num_workers", fixed.get("dataset_num_workers", 0))
