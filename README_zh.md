@@ -226,10 +226,12 @@ metadata.jsonl 每行一条样本：
 - ERNIE-Image
 - FLUX.1
 - FLUX.2
+- FLUX.3
 - HiDream-O1-Image
 - Ideogram 4
 - JoyAI-Image
 - Krea 2
+- MOSS-Image
 - Qwen-Image
 - Qwen-Image 2.1
 - SenseNova-U1

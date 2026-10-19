@@ -14,6 +14,7 @@ PIPELINE_MODULES = {
     "BooguImagePipeline": "diffsynth.pipelines.boogu_image",
     "ErnieImagePipeline": "diffsynth.pipelines.ernie_image",
     "Flux2ImagePipeline": "diffsynth.pipelines.flux2_image",
+    "Flux3ImagePipeline": "diffsynth.pipelines.flux3_image",
     "FluxImagePipeline": "diffsynth.pipelines.flux_image",
     "HiDreamO1ImagePipeline": "diffsynth.pipelines.hidream_o1_image",
     "Ideogram4Pipeline": "diffsynth.pipelines.ideogram4",
@@ -22,6 +23,7 @@ PIPELINE_MODULES = {
     "LTX2AudioVideoPipeline": "diffsynth.pipelines.ltx2_audio_video",
     "LingBotVideoPipeline": "diffsynth.pipelines.lingbot_video",
     "MiniMaxH3Pipeline": "diffsynth.pipelines.minimax_h3_audio_video",
+    "MOSSImagePipeline": "diffsynth.pipelines.moss_image",
     "MovaAudioVideoPipeline": "diffsynth.pipelines.mova_audio_video",
     "QwenImagePipeline": "diffsynth.pipelines.qwen_image",
     "QwenImage21Pipeline": "diffsynth.pipelines.qwen_image_21",
@@ -54,9 +56,81 @@ MINIMAX_OFFLOAD_MODEL_CONFIG = {
     "onload_device": "cpu",
 }
 
+MODEL_PROFILES = {
+    "offload": OFFLOAD_MODEL_CONFIG,
+    "minimax_offload": MINIMAX_OFFLOAD_MODEL_CONFIG,
+    "offload_cpu": MINIMAX_OFFLOAD_MODEL_CONFIG,
+}
+
 
 def _field_label(name: str) -> str:
     return FIELD_LABELS.get(name, name.replace("_", " ").title())
+
+
+def apply_model_config_overrides(
+    model_configs: List[Dict[str, Any]], overrides: Optional[List[Dict[str, Any]]]
+) -> List[Dict[str, Any]]:
+    for entry in model_configs:
+        model_config = entry.get("$model_config")
+        if not isinstance(model_config, dict):
+            continue
+        target = str(model_config.get("origin_file_pattern") or model_config.get("path") or "")
+        for override in overrides or []:
+            pattern = str((override or {}).get("file_pattern") or "")
+            if pattern and pattern in target:
+                model_config.update({key: value for key, value in override.items() if key != "file_pattern"})
+    return model_configs
+
+
+def resolve_model_profile(name: Any) -> Dict[str, Any]:
+    return MODEL_PROFILES.get(str(name or ""), {})
+
+
+def build_sampling_model_configs(
+    model_paths: List[Dict[str, Any]],
+    model_profile: Optional[Dict[str, Any]] = None,
+    overrides: Optional[List[Dict[str, Any]]] = None,
+) -> List[Dict[str, Any]]:
+    model_profile = model_profile or {}
+    model_configs: List[Dict[str, Any]] = []
+    for item in model_paths:
+        config: Dict[str, Any] = {}
+        if item.get("local_path"):
+            config["path"] = item["local_path"]
+        elif item.get("model_id"):
+            config["model_id"] = item["model_id"]
+        if item.get("file_pattern"):
+            config["origin_file_pattern"] = item["file_pattern"]
+        if item.get("nf4"):
+            excludes = [x.strip() for x in str(item.get("exclude_modules") or "").split(",") if x.strip()]
+            config["quantize"] = {
+                "$quantize_config": {"method": "bitsandbytes_nf4", "exclude_modules": excludes or None}
+            }
+        config.update(model_profile)
+        model_configs.append({"$model_config": config})
+    return apply_model_config_overrides(model_configs, overrides)
+
+
+def rebuild_sampling_model_configs(
+    pipeline: Dict[str, Any], model_paths: List[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    model_profile = resolve_model_profile(pipeline.get("model_profile"))
+    overrides = pipeline.get("model_config_overrides")
+    compact_models = pipeline.get("models")
+    if compact_models is None:
+        return build_sampling_model_configs(model_paths, model_profile, overrides)
+    edits = {
+        (str(item.get("model_id") or ""), str(item.get("file_pattern") or "")): item
+        for item in model_paths
+    }
+    merged = [
+        edits.get(
+            (str(item[0]), str(item[1]) if len(item) > 1 else ""),
+            {"model_id": item[0], "file_pattern": item[1] if len(item) > 1 else ""},
+        )
+        for item in compact_models
+    ]
+    return build_sampling_model_configs(merged, model_profile, overrides)
 
 
 def _normalize_sampling(data: Dict[str, Any], defaults: Dict[str, Any], training_args: Dict[str, Any]) -> Dict[str, Any]:
@@ -69,35 +143,7 @@ def _normalize_sampling(data: Dict[str, Any], defaults: Dict[str, Any], training
     if not class_name or not module:
         return {}
 
-    model_profile = {
-        "offload": OFFLOAD_MODEL_CONFIG,
-        "minimax_offload": MINIMAX_OFFLOAD_MODEL_CONFIG,
-        "offload_cpu": MINIMAX_OFFLOAD_MODEL_CONFIG,
-    }.get(str(pipeline.get("model_profile") or ""), {})
-    compact_models = pipeline.get("models")
-    if compact_models is None:
-        model_configs = [
-            {
-                "$model_config": {
-                    **({"path": item["local_path"]} if item.get("local_path") else {}),
-                    **({"model_id": item["model_id"]} if item.get("model_id") else {}),
-                    **({"origin_file_pattern": item["file_pattern"]} if item.get("file_pattern") else {}),
-                    **model_profile,
-                }
-            }
-            for item in defaults.get("model_paths") or []
-        ]
-    else:
-        model_configs = [
-            {
-                "$model_config": {
-                    "model_id": item[0],
-                    **({"origin_file_pattern": item[1]} if len(item) > 1 and item[1] else {}),
-                    **model_profile,
-                }
-            }
-            for item in compact_models
-        ]
+    model_configs = rebuild_sampling_model_configs(pipeline, defaults.get("model_paths") or [])
     compact_configs = {
         key: (
             None

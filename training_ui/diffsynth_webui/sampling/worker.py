@@ -108,20 +108,9 @@ def _prepare_sampling_config(run: tasks.TaskRunRecord) -> Optional[Path]:
     model_paths = run.config.get("model_paths") or []
     from_pretrained = pipeline.get("from_pretrained") or {}
     if model_paths and isinstance(from_pretrained.get("model_configs"), list):
-        configs = []
-        for item in model_paths:
-            config = {}
-            if item.get("local_path"):
-                config["path"] = item["local_path"]
-            elif item.get("model_id"):
-                config["model_id"] = item["model_id"]
-            if item.get("file_pattern"):
-                config["origin_file_pattern"] = item["file_pattern"]
-            if item.get("nf4"):
-                excludes = [x.strip() for x in str(item.get("exclude_modules") or "").split(",") if x.strip()]
-                config["quantize"] = {"$quantize_config": {"method": "bitsandbytes_nf4", "exclude_modules": excludes or None}}
-            configs.append({"$model_config": config})
-        from_pretrained["model_configs"] = configs
+        from_pretrained["model_configs"] = recipes.rebuild_sampling_model_configs(
+            pipeline, model_paths
+        )
         pipeline["from_pretrained"] = from_pretrained
     checkpoint = _latest_checkpoint(run.output_path)
     if not checkpoint:

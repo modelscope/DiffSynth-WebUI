@@ -274,6 +274,7 @@ def _build_staged_command(
         "model_id_with_origin_paths",
         "model_paths",
         "fp8_models",
+        "offload_models",
         "task",
         "max_timestep_boundary",
         "min_timestep_boundary",

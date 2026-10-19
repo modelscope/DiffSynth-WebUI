@@ -1,0 +1,135 @@
+{
+  "family": "ltx2",
+  "name": "LTX-2.5-T2AV-Int8-ConvRot-splited",
+  "generation_type": "video",
+  "source_script": "examples/ltx2/model_training/lora/LTX-2.5-Int8-ConvRot-splited.sh",
+  "train_script": "examples/ltx2/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "Lightricks/LTX-2.5",
+        "file_pattern": "text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "Lightricks/LTX-2.5",
+        "file_pattern": "diffusion_models/ltx-2.5-22b-dev-transformer-comfy-int8-convrot.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "Lightricks/LTX-2.5",
+        "file_pattern": "vae/ltx-2.5-video-vae-bf16.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "Lightricks/LTX-2.5",
+        "file_pattern": "vae/ltx-2.5-audio-vae-bf16.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "DiffSynth-Studio/LTX-2.5-Repackage",
+        "file_pattern": "text_encoder_post_modules.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "to_k,to_q,to_v,to_out.0",
+    "lora_rank": 32,
+    "dataset_repeat": 100,
+    "resolution_mode": "hw",
+    "max_pixels": null,
+    "height": 512,
+    "width": 768,
+    "num_epochs": 5,
+    "learning_rate": 0.0001,
+    "optimizer": "torch.optim.AdamW",
+    "extra_inputs": null,
+    "num_frames": 121
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": false,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "use_gradient_checkpointing": true,
+    "data_file_keys": "video,input_audio",
+    "tokenizer_path": "./models/DiffSynth-Studio/LTX-2.5-Repackage/tokenizer"
+  },
+  "stages": [
+    {
+      "dataset_repeat": "1",
+      "num_epochs": 1,
+      "model_id_with_origin_paths": "Lightricks/LTX-2.5:text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors,Lightricks/LTX-2.5:diffusion_models/ltx-2.5-22b-dev-transformer-comfy-int8-convrot.safetensors,Lightricks/LTX-2.5:vae/ltx-2.5-video-vae-bf16.safetensors,Lightricks/LTX-2.5:vae/ltx-2.5-audio-vae-bf16.safetensors,DiffSynth-Studio/LTX-2.5-Repackage:text_encoder_post_modules.safetensors",
+      "offload_models": "Lightricks/LTX-2.5:diffusion_models/ltx-2.5-22b-dev-transformer-comfy-int8-convrot.safetensors",
+      "task": "sft:data_process"
+    },
+    {
+      "dataset_repeat": "100",
+      "num_epochs": 5,
+      "model_id_with_origin_paths": "Lightricks/LTX-2.5:text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors,Lightricks/LTX-2.5:diffusion_models/ltx-2.5-22b-dev-transformer-comfy-int8-convrot.safetensors,Lightricks/LTX-2.5:vae/ltx-2.5-video-vae-bf16.safetensors,Lightricks/LTX-2.5:vae/ltx-2.5-audio-vae-bf16.safetensors,DiffSynth-Studio/LTX-2.5-Repackage:text_encoder_post_modules.safetensors",
+      "offload_models": "Lightricks/LTX-2.5:text_encoders/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors,Lightricks/LTX-2.5:vae/ltx-2.5-video-vae-bf16.safetensors,Lightricks/LTX-2.5:vae/ltx-2.5-audio-vae-bf16.safetensors,DiffSynth-Studio/LTX-2.5-Repackage:text_encoder_post_modules.safetensors",
+      "task": "sft:train"
+    }
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "negative_prompt",
+        "type": "string"
+      },
+      {
+        "name": "height",
+        "type": "number",
+        "default": 512
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 768
+      },
+      {
+        "name": "num_frames",
+        "type": "number",
+        "default": 121
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 30
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 3.0
+      }
+    ],
+    "pipeline": {
+      "class": "LTX2AudioVideoPipeline",
+      "model_profile": "offload",
+      "from_pretrained": {
+        "tokenizer_config": {
+          "$model_config": {
+            "path": "./models/DiffSynth-Studio/LTX-2.5-Repackage/tokenizer"
+          }
+        }
+      },
+      "output_fps": 24
+    }
+  }
+}
