@@ -1,0 +1,101 @@
+{
+  "family": "fibo",
+  "name": "Fibo-2.0-dev-T2I",
+  "generation_type": "image",
+  "source_script": "examples/fibo/model_training/lora/Fibo-2.0-dev-T2I.sh",
+  "train_script": "examples/fibo/model_training/train.py",
+  "defaults": {
+    "model_paths": [
+      {
+        "model_id": "briaai/Fibo-2.0-dev",
+        "file_pattern": "transformer/*.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "briaai/Fibo-2.0-dev",
+        "file_pattern": "text_encoder/model.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      },
+      {
+        "model_id": "briaai/Fibo-2.0-dev",
+        "file_pattern": "vae/diffusion_pytorch_model.safetensors",
+        "local_path": "",
+        "fp8": false,
+        "nf4": false,
+        "exclude_modules": ""
+      }
+    ],
+    "enable_custom_lora_target": false,
+    "lora_target_modules": "to_q,to_k,to_v,to_out.0,w1,w2,w3",
+    "lora_rank": 32,
+    "dataset_repeat": 50,
+    "resolution_mode": "max_pixels",
+    "max_pixels": 1048576,
+    "height": 1024,
+    "width": 1024,
+    "num_epochs": 5,
+    "learning_rate": 0.0001,
+    "optimizer": "torch.optim.AdamW",
+    "extra_inputs": ""
+  },
+  "training_args": {
+    "gradient_accumulation": 1,
+    "dataset_num_workers": 0,
+    "find_unused_parameters": false,
+    "remove_prefix_in_ckpt": "pipe.dit.",
+    "lora_base_model": "dit",
+    "use_gradient_checkpointing": true,
+    "data_file_keys": "image",
+    "processor_path": "briaai/Fibo-2.0-dev:processor/",
+    "font_path": "briaai/Fibo-2.0-dev:fonts/"
+  },
+  "stages": [
+    {}
+  ],
+  "sampling": {
+    "input_schema": [
+      {
+        "name": "height",
+        "type": "number",
+        "default": 1024
+      },
+      {
+        "name": "width",
+        "type": "number",
+        "default": 1024
+      },
+      {
+        "name": "num_inference_steps",
+        "type": "number",
+        "default": 50
+      },
+      {
+        "name": "cfg_scale",
+        "type": "number",
+        "default": 5.0
+      }
+    ],
+    "pipeline": {
+      "class": "FiboPipeline",
+      "configs": {
+        "processor_config": [
+          "briaai/Fibo-2.0-dev",
+          "processor/"
+        ],
+        "font_config": [
+          "briaai/Fibo-2.0-dev",
+          "fonts/"
+        ]
+      }
+    },
+    "sample_prompts": [
+      "{\"short_description\":\"An origami whale swimming through paper clouds.\",\"style_medium\":\"paper craft photograph\"}"
+    ]
+  }
+}

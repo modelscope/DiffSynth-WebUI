@@ -16,6 +16,7 @@ PIPELINE_MODULES = {
     "Flux2ImagePipeline": "diffsynth.pipelines.flux2_image",
     "Flux3ImagePipeline": "diffsynth.pipelines.flux3_image",
     "FluxImagePipeline": "diffsynth.pipelines.flux_image",
+    "FiboPipeline": "diffsynth.pipelines.fibo",
     "HiDreamO1ImagePipeline": "diffsynth.pipelines.hidream_o1_image",
     "Ideogram4Pipeline": "diffsynth.pipelines.ideogram4",
     "JoyAIImagePipeline": "diffsynth.pipelines.joyai_image",
@@ -23,6 +24,7 @@ PIPELINE_MODULES = {
     "LTX2AudioVideoPipeline": "diffsynth.pipelines.ltx2_audio_video",
     "LingBotVideoPipeline": "diffsynth.pipelines.lingbot_video",
     "MiniMaxH3Pipeline": "diffsynth.pipelines.minimax_h3_audio_video",
+    "MiniMaxH3ImagePipeline": "diffsynth.pipelines.minimax_h3_image",
     "MOSSImagePipeline": "diffsynth.pipelines.moss_image",
     "MovaAudioVideoPipeline": "diffsynth.pipelines.mova_audio_video",
     "QwenImagePipeline": "diffsynth.pipelines.qwen_image",
@@ -224,6 +226,7 @@ class ModelRecipe:
     extra_inputs_override: Optional[str] = None
     default_resolution_mode: Optional[str] = None
     default_max_pixels: Optional[int] = None
+    default_min_pixels: Optional[int] = None
     default_height: Optional[int] = None
     default_width: Optional[int] = None
     default_num_frames: Optional[int] = None
@@ -324,6 +327,10 @@ def _load_recipe(path: Path) -> ModelRecipe:
         default_max_pixels=(
             int(defaults["max_pixels"])
             if defaults.get("max_pixels") is not None else None
+        ),
+        default_min_pixels=(
+            int(defaults["min_pixels"])
+            if defaults.get("min_pixels") is not None else None
         ),
         default_height=(
             int(defaults["height"])

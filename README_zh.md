@@ -224,6 +224,7 @@ metadata.jsonl 每行一条样本：
 - Anima
 - Boogu-Image
 - ERNIE-Image
+- Fibo 2.0
 - FLUX.1
 - FLUX.2
 - FLUX.3
@@ -231,6 +232,7 @@ metadata.jsonl 每行一条样本：
 - Ideogram 4
 - JoyAI-Image
 - Krea 2
+- MiniMax-H3-Image
 - MOSS-Image
 - Qwen-Image
 - Qwen-Image 2.1

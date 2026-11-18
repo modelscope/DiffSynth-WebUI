@@ -55,7 +55,7 @@ def _stringify_model_paths(model_paths: List[Dict[str, Any]]) -> Tuple[str, str,
                 fp8_parts.append(spec)
             if nf4:
                 quant_parts.append(f"{spec}:bitsandbytes_nf4" + (f"/{exclude_modules}" if exclude_modules else ""))
-    return (",".join(origin_parts), ",".join(local_parts), ",".join(fp8_parts), ";".join(quant_parts))
+    return (",".join(origin_parts), json.dumps(local_parts, ensure_ascii=False) if local_parts else "", ",".join(fp8_parts), ";".join(quant_parts))
 
 
 def _resolve_extra_inputs(dataset_name: str, recipe: recipes.ModelRecipe) -> str:
@@ -137,6 +137,7 @@ def build_command(
         resolution_mode = cfg.get("resolution_mode") or recipe.default_resolution_mode
         if resolution_mode == "max_pixels":
             add("max_pixels", cfg.get("max_pixels", recipe.default_max_pixels))
+            add("min_pixels", recipe.default_min_pixels)
         else:
             add("height", cfg.get("height", recipe.default_height))
             add("width", cfg.get("width", recipe.default_width))
@@ -258,8 +259,9 @@ def _build_staged_command(
 
     def set_arg(command: List[str], key: str, value: Any) -> None:
         remove_arg(command, key)
-        if value is True:
-            command.append(f"--{key}")
+        if isinstance(value, bool):
+            if value:
+                command.append(f"--{key}")
         elif value is not None and value != "":
             command.extend([f"--{key}", str(value)])
 
@@ -270,10 +272,15 @@ def _build_staged_command(
         and str(recipe.training_stages[0].get("task", "")).endswith(":data_process")
         and str(recipe.training_stages[1].get("task", "")).endswith(":train")
     )
+    model_args = {"model_id_with_origin_paths", "model_paths", "fp8_models", "quant_options"}
+    default_models = [f"{model.model_id}:{model.file_pattern}" for model in recipe.default_model_paths]
+    model_paths = cfg.get("model_paths") or []
     stage_specific = {
         "model_id_with_origin_paths",
         "model_paths",
         "fp8_models",
+        "quant_options",
+        "find_unused_parameters",
         "offload_models",
         "task",
         "max_timestep_boundary",
@@ -284,6 +291,18 @@ def _build_staged_command(
     }
     for index, stage in enumerate(recipe.training_stages):
         stage = dict(stage)
+        if "model_id_with_origin_paths" in stage:
+            stage_models = stage.pop("model_id_with_origin_paths").split(",")
+            if set(stage_models) != set(default_models):
+                if len(model_paths) != len(default_models):
+                    raise ValueError("Stages selecting model subsets require keeping the preset model rows; edit their paths instead.")
+                selected = [model for source, model in zip(default_models, model_paths) if source in stage_models]
+                origin, local, fp8, quant = _stringify_model_paths(selected)
+                stage.update(model_id_with_origin_paths=origin, model_paths=local, fp8_models=fp8, quant_options=quant)
+        if "offload_models" in stage:
+            offloaded = [model for source, model in zip(default_models, model_paths) if source in stage["offload_models"].split(",")]
+            origin, local, _, _ = _stringify_model_paths(offloaded)
+            stage["offload_models"] = ",".join(([origin] if origin else []) + (json.loads(local) if local else []))
         raw_configured_stages = cfg.get("stage_parameters") or []
         configured_stages = raw_configured_stages if isinstance(raw_configured_stages, list) else []
         configured_stage = (
@@ -316,6 +335,8 @@ def _build_staged_command(
             raise ValueError(f"min_timestep_boundary cannot exceed max_timestep_boundary in stage {index + 1}")
         command = list(base_argv)
         for key in stage_specific:
+            if key in model_args and key not in stage:
+                continue
             remove_arg(command, key)
             if key in stage:
                 set_arg(command, key, stage[key])
