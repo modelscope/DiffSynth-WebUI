@@ -54,6 +54,7 @@ const MODEL_FAMILY_LABELS: Record<string, string> = {
   ace_step: "ACE-Step",
   anima: "Anima",
   boogu_image: "Boogu-Image",
+  diffsynth_music: "DiffSynth-Music",
   ernie_image: "ERNIE-Image",
   flux: "FLUX.1",
   flux2: "FLUX.2",
@@ -67,6 +68,7 @@ const MODEL_FAMILY_LABELS: Record<string, string> = {
   ltx2: "LTX-2",
   minimax_h3: "MiniMax-H3",
   minimax_h3_image: "MiniMax-H3-Image",
+  minimax_music3: "MiniMax-Music3",
   moss_image: "MOSS-Image",
   mova: "MOVA",
   qwen_image: "Qwen-Image",
@@ -76,6 +78,7 @@ const MODEL_FAMILY_LABELS: Record<string, string> = {
   stable_diffusion: "Stable Diffusion",
   stable_diffusion_xl: "Stable Diffusion XL",
   wanvideo: "Wan",
+  yue2: "YuE2",
   z_image: "Z-Image",
 };
 
