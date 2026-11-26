@@ -123,7 +123,7 @@ export default function NewTaskPage() {
   const [dataset, setDataset] = useState<string>("");
   const [datasetRepeat, setDatasetRepeat] = useState<number | "">(1);
   const [resolutionMode, setResolutionMode] = useState<"max_pixels" | "hw">("max_pixels");
-  const [maxPixels, setMaxPixels] = useState(1048576);
+  const [maxPixels, setMaxPixels] = useState(16777216);
   const [maxPixelHeight, setMaxPixelHeight] = useState<number | "">(1024);
   const [maxPixelWidth, setMaxPixelWidth] = useState<number | "">(1024);
   const [height, setHeight] = useState<number | "">(1024);

@@ -64,7 +64,7 @@ def _resolve_extra_inputs(dataset_name: str, recipe: recipes.ModelRecipe) -> str
     keys = datasets.get_extra_input_keys(dataset_name)
     if "edit_image" not in set((recipe.default_data_file_keys or "").split(",")):
         keys = [key for key in keys if key != "edit_image"]
-    return ",".join(keys)
+    return ",".join(dict.fromkeys([*recipe.derived_extra_inputs, *keys]))
 
 
 def build_command(
@@ -317,6 +317,8 @@ def _build_staged_command(
             stage["num_epochs"] = value
         if data_process_then_train:
             stage["num_epochs"] = 1 if index == 0 else cfg.get("num_epochs", recipe.default_epochs)
+        elif configured_stage.get("num_epochs") is None and cfg.get("num_epochs") is not None:
+            stage["num_epochs"] = cfg["num_epochs"]
         for key in ("max_timestep_boundary", "min_timestep_boundary"):
             if key in stage and configured_stage.get(key) is not None:
                 value = float(configured_stage[key])
@@ -351,7 +353,9 @@ def _build_staged_command(
         is_last = index == len(recipe.training_stages) - 1
         stage_output = output_path if is_last else output_path / f"stage_{index + 1}"
         set_arg(command, "output_path", stage_output)
-        if recipe.dataset_repeat_stage_index == index:
+        if recipe.dataset_repeat_stage_index == index or (
+            not data_process_then_train and cfg.get("dataset_repeat") is not None
+        ):
             set_arg(command, "dataset_repeat", cfg.get("dataset_repeat", recipe.default_dataset_repeat))
         elif "dataset_repeat" in stage:
             set_arg(command, "dataset_repeat", stage["dataset_repeat"])

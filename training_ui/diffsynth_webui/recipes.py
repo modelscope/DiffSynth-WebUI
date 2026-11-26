@@ -224,6 +224,7 @@ class ModelRecipe:
     extra_defaults: Dict[str, Any] = field(default_factory=dict)
     default_data_file_keys: str = "image,video,audio,edit_image"
     extra_inputs_override: Optional[str] = None
+    derived_extra_inputs: List[str] = field(default_factory=list)
     default_resolution_mode: Optional[str] = None
     default_max_pixels: Optional[int] = None
     default_min_pixels: Optional[int] = None
@@ -320,6 +321,7 @@ def _load_recipe(path: Path) -> ModelRecipe:
             None if defaults.get("extra_inputs") is None
             else str(defaults["extra_inputs"])
         ),
+        derived_extra_inputs=list(defaults.get("derived_extra_inputs") or []),
         default_resolution_mode=(
             str(defaults["resolution_mode"])
             if defaults.get("resolution_mode") is not None else None
